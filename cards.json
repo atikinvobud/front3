@@ -1,17 +1,51 @@
 [
   {
+    "id": 1,
     "name": "headphones",
     "cost": 500,
-    "description": "bestheadphones"
+    "description": "bestheadphones",
+    "categories": [
+      "electronics",
+      "audio"
+    ]
   },
   {
+    "id": 2,
     "name": "mouse",
-    "cost": 300,
-    "description": "bestmouse"
+    "cost": 22227,
+    "description": "edit",
+    "categories": [
+      "mose"
+    ]
   },
   {
+    "id": 3,
     "name": "keyboard",
     "cost": "122",
-    "description": "aaaa"
+    "description": "aaaa",
+    "categories": [
+      "electronics",
+      "peripherals"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "monotor",
+    "cost": "4400",
+    "description": "бб",
+    "categories": [
+      "electronics",
+      "display"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "notebook",
+    "cost": "440",
+    "description": "бб",
+    "categories": [
+      "electronics",
+      "computers"
+    ]
   }
 ]

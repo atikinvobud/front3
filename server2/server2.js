@@ -1,20 +1,29 @@
-const express = require('express');
-const fs =require('fs');
-const path = require('path')
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swaggerDefinitions");
-const app =express();
-const port =8080;
+
+const app = express();
+const port = 8080;
+const dataFilePath = path.join("D:", "front3", "cards.json");
+
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get('/', (req,res)=>{
-    fs.readFile(path.join(__dirname,'server.html'), 'utf8', (err,data)=>{
+app.get("/", (req, res) => {
+    fs.readFile(path.join(__dirname, "server.html"), "utf8", (err, data) => {
         if (err) res.status(404).send("Ошибка: файл index.html не найден");
         else res.send(data);
     });
 });
 
+app.get("/products", (req, res) => {
+    fs.readFile(dataFilePath, "utf8", (err, data) => {
+        if (err) return res.status(500).json({ error: "Ошибка чтения файла" });
+        res.json(JSON.parse(data));
+    });
+});
 /**
  * @swagger
  * /add-product:
@@ -28,12 +37,23 @@ app.get('/', (req,res)=>{
  *           schema:
  *             type: object
  *             properties:
+ *               id:
+ *                 type: int
+ *                 description: Уникальный идентификатор товара
  *               name:
  *                 type: string
+ *                 description: Название товара
  *               cost:
  *                 type: number
+ *                 description: Цена товара
  *               description:
  *                 type: string
+ *                 description: Описание товара
+ *               categories:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Категории товара
  *     responses:
  *       201:
  *         description: Товар успешно добавлен
@@ -41,34 +61,39 @@ app.get('/', (req,res)=>{
  *         description: Некорректные данные
  */
 app.post("/add-product", (req, res) => {
-    const newProduct = req.body;
-    const dataFilePath = path.join("D:", "front3", "cards.json");
+    const { name, cost, description, categories } = req.body;
+    if (!name || !cost || !description || !categories) {
+        return res.status(400).json({ error: "Некорректные данные" });
+    }
 
     fs.readFile(dataFilePath, "utf8", (err, data) => {
         if (err) return res.status(500).json({ error: "Ошибка чтения файла" });
 
-        try {
-            const jsonData = JSON.parse(data);
-            jsonData.push(newProduct);
+        let jsonData = JSON.parse(data).map(p => ({
+            ...p,
+            id: Number(p.id) // Приводим id к числу
+        }));
 
-            fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), (err) => {
-                if (err) {
-                    return res.status(500).json({ message: "Ошибка записи в файл" });
-                }
-                res.json({ message: "Товар добавлен", product: newProduct });
-            });
-        } catch (parseError) {
-            res.status(500).json({ error: "Ошибка парсинга JSON" });
-        }
+        const lastId = jsonData.length > 0 ? Math.max(...jsonData.map(p => p.id)) : 0;
+        const newId = lastId + 1;
+
+        const newProduct = { id: newId, name, cost, description, categories };
+        jsonData.push(newProduct);
+
+        fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), (err) => {
+            if (err) return res.status(500).json({ message: "Ошибка записи в файл" });
+            res.status(201).json({ message: "Товар добавлен", product: newProduct });
+        });
     });
 });
-app.use(express.json()); 
+
+
 /**
  * @swagger
- * /edit-product:
+ * /edit-product/:id:
  *   put:
- *     summary: Изменить товар
- *     description: Изменяет товар в JSON-файл.
+ *     summary: Редактировать товар
+ *     description: Редактирует товар в JSON-файл.
  *     requestBody:
  *       required: true
  *       content:
@@ -76,52 +101,62 @@ app.use(express.json());
  *           schema:
  *             type: object
  *             properties:
+ *               id:
+ *                 type: int
+ *                 description: Уникальный идентификатор товара
  *               name:
  *                 type: string
+ *                 description: Название товара
  *               cost:
  *                 type: number
+ *                 description: Цена товара
  *               description:
  *                 type: string
+ *                 description: Описание товара
+ *               categories:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Категории товара
  *     responses:
  *       200:
  *         description: Товар успешно изменен
  *       404:
  *         description: Товар не найден
  */
-app.put("/edit-product", (req, res) => {
-    const updatedProduct = req.body;
-    const dataFilePath = path.join("D:", "front3", "cards.json");
+app.put("/edit-product/:id", (req, res) => {
+    const id = Number(req.params.id);
+    const { name, cost, description, categories } = req.body;
 
     fs.readFile(dataFilePath, "utf8", (err, data) => {
         if (err) return res.status(500).json({ error: "Ошибка чтения файла" });
 
-        try {
-            let jsonData = JSON.parse(data);
+        let jsonData = JSON.parse(data).map(p => ({
+            ...p,
+            id: Number(p.id) // Приводим id к числу
+        }));
 
-            const productIndex = jsonData.findIndex((p) => p.name === updatedProduct.name);
-            if (productIndex === -1) {
-                return res.status(404).json({ error: "Товар не найден" });
-            }
+        const productIndex = jsonData.findIndex(p => p.id === id);
 
-            jsonData[productIndex] = updatedProduct;
+        if (productIndex === -1) return res.status(404).json({ error: "Товар не найден" });
 
-            fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), (err) => {
-                if (err) {
-                    return res.status(500).json({ message: "Ошибка записи в файл" });
-                }
-                res.json({ message: "Товар обновлен", product: updatedProduct });
-            });
-        } catch (parseError) {
-            res.status(500).json({ error: "Ошибка парсинга JSON" });
-        }
+        jsonData[productIndex] = { id, name, cost, description, categories };
+
+        fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), (err) => {
+            if (err) return res.status(500).json({ message: "Ошибка записи в файл" });
+            res.json({ message: "Товар обновлен", product: jsonData[productIndex] });
+        });
     });
 });
+
+
+
 /**
  * @swagger
- * /delete-product:
+ * /delete-product/:id:
  *   delete:
- *     summary: Удаляет товар
- *     description: Удаляет товар в JSON-файл.
+ *     summary: Редактировать товар
+ *     description: Редактирует товар в JSON-файл.
  *     requestBody:
  *       required: true
  *       content:
@@ -129,44 +164,37 @@ app.put("/edit-product", (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               name:
- *                 type: string
+ *               id:
+ *                 type: int
+ *                 description: Уникальный идентификатор товара
  *     responses:
  *       200:
  *         description: Товар успешно удален
  *       404:
  *         description: Товар не найден
  */
-app.delete("/delete-product", (req, res) => {
-    const { name } = req.body;
-    const dataFilePath = path.join("D:", "front3", "cards.json");
-
+app.delete("/delete-product/:id", (req, res) => {
+    const id = Number(req.params.id);
+    
     fs.readFile(dataFilePath, "utf8", (err, data) => {
         if (err) return res.status(500).json({ error: "Ошибка чтения файла" });
 
-        try {
-            let jsonData = JSON.parse(data);
+        let jsonData = JSON.parse(data).map(p => ({
+            ...p,
+            id: Number(p.id) // Приводим id к числу
+        }));
 
-            const updatedData = jsonData.filter((product) => product.name !== name);
+        const updatedData = jsonData.filter((product) => product.id !== id);
+        if (updatedData.length === jsonData.length) return res.status(404).json({ error: "Товар не найден" });
 
-            if (updatedData.length === jsonData.length) {
-                return res.status(404).json({ error: "Товар не найден" });
-            }
-
-            fs.writeFile(dataFilePath, JSON.stringify(updatedData, null, 2), (err) => {
-                if (err) {
-                    return res.status(500).json({ message: "Ошибка записи в файл" });
-                }
-                res.json({ message: "Товар удален", deleted: name });
-            });
-        } catch (parseError) {
-            res.status(500).json({ error: "Ошибка парсинга JSON" });
-        }
+        fs.writeFile(dataFilePath, JSON.stringify(updatedData, null, 2), (err) => {
+            if (err) return res.status(500).json({ message: "Ошибка записи в файл" });
+            res.json({ message: "Товар удален", deletedId: id });
+        });
     });
 });
 
-
 app.use(express.static(path.join(__dirname, "public")));
-app.listen(port, ()=>{
-    console.log('Second server is running');
-})
+app.listen(port, () => {
+    console.log("Server is running on port " + port);
+});

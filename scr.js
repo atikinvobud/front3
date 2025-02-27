@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const container = document.getElementById("products-container");
     try {
-        const response = await fetch("http://localhost:3000/json "); 
+        const response = await fetch("http://localhost:3000/json"); 
         const products = await response.json();
 
         products.forEach(product => {
@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <h3>${product.name}</h3>
                 <p>Цена: ${product.cost} руб.</p>
                 <p>${product.description}</p>
+                <p>Категории: ${product.categories.join(", ")}</p>
             `;
 
             container.appendChild(card);

@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Управление товарами</title>
     <link rel="stylesheet" href="style2.css">
-
 </head>
 <body>
     <div class="container">
         <h1>Управление товарами</h1>
 
+        <label for="product-id">ID товара:</label>
+        <input type="text" id="product-id" placeholder="Введите ID">
+        
         <label for="name">Название:</label>
         <input type="text" id="name" placeholder="Введите название">
 
@@ -19,6 +21,9 @@
 
         <label for="description">Описание:</label>
         <input type="text" id="description" placeholder="Введите описание">
+
+        <label for="category">Категория:</label>
+        <input type="text" id="category" placeholder="Введите категорию">
 
         <div class="buttons">
             <button id="add-product">Добавить</button>
