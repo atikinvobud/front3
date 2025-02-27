@@ -1,0 +1,17 @@
+[
+  {
+    "name": "headphones",
+    "cost": 500,
+    "description": "bestheadphones"
+  },
+  {
+    "name": "mouse",
+    "cost": 300,
+    "description": "bestmouse"
+  },
+  {
+    "name": "keyboard",
+    "cost": "122",
+    "description": "aaaa"
+  }
+]
