@@ -10,7 +10,7 @@ document.getElementById("add-product").addEventListener("click", () => {
         return;
     }
 
-    const newProduct = { name, cost, description, categories }; // ID теперь создаётся на сервере
+    const newProduct = { name, cost, description, categories }; 
 
     fetch("/add-product", {
         method: "POST",
@@ -79,3 +79,28 @@ document.getElementById("delete-product").addEventListener("click", () => {
     .catch(error => console.error("Ошибка:", error));
 });
 
+const socket = new WebSocket("ws://localhost:8081?userID=admin");
+
+socket.onmessage = (event) => {
+  const chatBox = document.getElementById("chat-box");
+  const message = document.createElement("p");
+  message.textContent = "Клиент: " + event.data;
+  chatBox.appendChild(message);
+};
+
+document.getElementById("send-btn").addEventListener("click", () => {
+  const input = document.getElementById("chat-input");
+  const message = input.value.trim();
+
+  if (message) {
+    socket.send(JSON.stringify({ text: message }));
+
+    const chatBox = document.getElementById("chat-box");
+    const adminMessage = document.createElement("p");
+    adminMessage.textContent = "Вы: " + message;
+    adminMessage.style.color = "blue";
+    chatBox.appendChild(adminMessage);
+
+    input.value = "";
+  }
+});

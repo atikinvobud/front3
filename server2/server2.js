@@ -1,15 +1,18 @@
 const express = require("express");
 const fs = require("fs");
+const http = require("http");
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swaggerDefinitions");
-
 const app = express();
 const port = 8080;
 const dataFilePath = path.join("D:", "front3", "cards.json");
-
+let clients ={};
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+
+
 
 app.get("/", (req, res) => {
     fs.readFile(path.join(__dirname, "server.html"), "utf8", (err, data) => {

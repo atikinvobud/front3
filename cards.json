@@ -21,7 +21,7 @@
   {
     "id": 3,
     "name": "keyboard",
-    "cost": "122",
+    "cost": 122,
     "description": "aaaa",
     "categories": [
       "electronics",
@@ -31,7 +31,7 @@
   {
     "id": 4,
     "name": "monotor",
-    "cost": "4400",
+    "cost": 4400,
     "description": "бб",
     "categories": [
       "electronics",
@@ -41,7 +41,7 @@
   {
     "id": 5,
     "name": "notebook",
-    "cost": "440",
+    "cost": 440,
     "description": "бб",
     "categories": [
       "electronics",

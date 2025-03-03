@@ -3,12 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Каталог товаров</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div>
     <h1>Каталог товаров</h1>
+    <form id="filter-form">
+        <div class="filter">
+            <label><input type="checkbox" name="field" id="id" value="id"> ID</label>
+            <label><input type="checkbox" name="field" id="name" value="name"> Name</label>
+            <label><input type="checkbox" name="field" id="cost" value="cost"> Cost</label>
+            <label><input type="checkbox" name="field" id="description" value="description"> Description</label>
+            <label><input type="checkbox" name="field" id="categories" value="categories"> Categories</label>
+        </div>
+        <button id="submit" type="submit">Отправить запрос</button>
+    </form>
     <div id="products-container" class="grid-container"></div>
+
+    <!-- Панель чата -->
+    <div class="chat-container">
+        <h2>Чат с админом</h2>
+        <div class="chat-box" id="chat-box"></div>
+        <input type="text" id="chat-input" placeholder="Введите сообщение...">
+        <button id="send-btn">Отправить</button>
+    </div>
+
     <script src="scr.js"></script>
 </body>
 </html>

@@ -2,6 +2,8 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     text-align: center;
+    display: flex;
+    flex-direction: row;
 }
 
 .container {
@@ -63,4 +65,44 @@ button {
 
 button:hover {
     opacity: 0.8;
+}
+/* Стили чата */
+.chat-container {
+    width: 300px;
+    margin: 20px auto;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.chat-box {
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f9f9f9;
+}
+
+#chat-input {
+    width: calc(100% - 80px);
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#send-btn {
+    width: 70px;
+    padding: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#send-btn:hover {
+    background-color: #0056b3;
 }
