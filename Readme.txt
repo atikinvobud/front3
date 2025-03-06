@@ -4,4 +4,6 @@
 Для запуска надо прописать
 cd server2
 npm run start2
+для запуска вебсокета сервера надо прописать node ws-server.js
 также доступна информация по api используя swagger на эндпоинте http://localhost:8080/api-docs
+также доступна информация про graphql на эндпоинте http://localhost:3000/graphql
