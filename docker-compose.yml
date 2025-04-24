@@ -1,0 +1,31 @@
+
+services:
+  server2:
+    build: 
+      context: ./server2
+    container_name: admin
+    ports: 
+      - "8080:8080"
+    depends_on:
+      - ws-server
+    volumes:
+       - ./cards.json:/app/cards.json
+    working_dir: /app
+  index:
+    build:
+      context: ./server1
+    container_name: server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ws-server
+    volumes:
+       - ./cards.json:/app/cards.json
+    working_dir: /app
+
+  ws-server:
+    build:
+      context: ./ws-server
+    ports:
+      - "8081:8081"
+    working_dir: /app

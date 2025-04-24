@@ -6,7 +6,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swaggerDefinitions");
 const app = express();
 const port = 8080;
-const dataFilePath = path.join("D:", "front3", "cards.json");
+const dataFilePath = require('./cards.json');
 let clients ={};
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -15,7 +15,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 app.get("/", (req, res) => {
-    fs.readFile(path.join(__dirname, "server.html"), "utf8", (err, data) => {
+    fs.readFile(path.join(__dirname,"public", "server.html"), "utf8", (err, data) => {
         if (err) res.status(404).send("Ошибка: файл index.html не найден");
         else res.send(data);
     });
@@ -197,7 +197,7 @@ app.delete("/delete-product/:id", (req, res) => {
     });
 });
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 app.listen(port, () => {
     console.log("Server is running on port " + port);
 });
